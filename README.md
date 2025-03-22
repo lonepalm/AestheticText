@@ -1,6 +1,6 @@
 # AestheticText
 
-A SwiftUI modifier that will compress `Text` horizontally as much as possible without wrapping to another line - that is, make each line as close in width as possible. For ✨ aesthetics ✨
+A SwiftUI modifier that will compress `Text` horizontally as much as possible without wrapping to another line - that is, make each line as close in width as possible. For ✨aesthetics✨
 
 ### Installation and Usage
 
