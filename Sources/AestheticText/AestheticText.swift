@@ -44,7 +44,7 @@ private struct AestheticTextLayout: Layout {
         cache = size
         return size
     }
-    
+
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout CGSize?) {
         assert(subviews.count == 1)
 
@@ -52,7 +52,11 @@ private struct AestheticTextLayout: Layout {
             return
         }
 
-        let size = cache ?? subview.sizeThatFits(proposal)
+        let size = cache ?? smallestSize(
+            for: subview,
+            proposal: proposal,
+            sizeThatFits: subview.sizeThatFits(proposal)
+        )
         subview.place(at: bounds.origin, proposal: ProposedViewSize(size))
     }
 
