@@ -27,36 +27,52 @@ private struct AestheticTextModifier: ViewModifier {
 }
 
 private struct AestheticTextLayout: Layout {
-    func makeCache(subviews: Subviews) -> CGSize? {
-        nil
+    struct CacheKey: Hashable {
+        let width: CGFloat?
+        let height: CGFloat?
     }
 
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout CGSize?) -> CGSize {
+    typealias Cache = [CacheKey: CGSize]
+
+    func makeCache(subviews: Subviews) -> Cache {
+        [:]
+    }
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) -> CGSize {
         assert(subviews.count == 1)
 
         guard let subview = subviews.first else {
             return .zero
         }
 
+        let key = CacheKey(width: proposal.width, height: proposal.height)
+        if let size = cache[key] {
+            return size
+        }
+
         let sizeThatFits = subview.sizeThatFits(proposal)
         let size = smallestSize(for: subview, proposal: proposal, sizeThatFits: sizeThatFits)
+        cache[key] = size
 
-        cache = size
         return size
     }
 
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout CGSize?) {
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) {
         assert(subviews.count == 1)
 
         guard let subview = subviews.first else {
             return
         }
 
-        let size = cache ?? smallestSize(
-            for: subview,
-            proposal: proposal,
-            sizeThatFits: subview.sizeThatFits(proposal)
-        )
+        let key = CacheKey(width: proposal.width, height: proposal.height)
+        if let size = cache[key] {
+            return subview.place(at: bounds.origin, proposal: ProposedViewSize(size))
+        }
+
+        let sizeThatFits = subview.sizeThatFits(proposal)
+        let size = smallestSize(for: subview, proposal: proposal, sizeThatFits: sizeThatFits)
+        cache[key] = size
+
         subview.place(at: bounds.origin, proposal: ProposedViewSize(size))
     }
 

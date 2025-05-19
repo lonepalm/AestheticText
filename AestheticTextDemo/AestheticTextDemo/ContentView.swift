@@ -27,7 +27,6 @@ struct ContentView: View {
                             .aestheticText()
                             .caption(".aestheticText()", alignment: .center)
 
-
                     VStack(alignment: .leading, spacing: 40) {
                         Text("It can sometimes create slightly awkward results for non-centered text.")
                             .caption("Default", alignment: .leading)
