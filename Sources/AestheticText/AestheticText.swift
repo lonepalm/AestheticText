@@ -79,6 +79,11 @@ private struct AestheticTextLayout: Layout {
     /// Performs a binary search to find the smallest width, up to a tuned precision,
     /// that does not affect the height (e.g., cause the text to wrap to another line).
     private func smallestSize(for subview: LayoutSubview, proposal: ProposedViewSize, sizeThatFits: CGSize) -> CGSize {
+        // If the text is only a single line, return the original size. Testing reduced widths can lead to truncated sizes.
+        let singleLineHeight = subview.sizeThatFits(.infinity).height
+        if sizeThatFits.height <= singleLineHeight {
+            return sizeThatFits
+        }
         var maxWidth = sizeThatFits.width
         // It will never make sense to wrap to less than half of the current width.
         var minWidth = maxWidth * 0.5
